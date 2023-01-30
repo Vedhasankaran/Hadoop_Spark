@@ -1,0 +1,219 @@
+===============================================================================================================================================
+
+===============================================================================================================================================
+import os
+cwd = os.getcwd()
+===============================================================================================================================================
+The os and os.path modules.
+The __file__ constant
+os.path.realpath(path) (returns "the canonical path of the specified filename, eliminating any symbolic links encountered in the path")
+os.path.dirname(path) (returns "the directory name of pathname path")
+os.getcwd() (returns "a string representing the current working directory")
+os.chdir(path) ("change the current working directory to path")
+
+os.listdir(path) Returns the contents of the Directiory as List
+				[or]
+import glob
+print(glob.glob("*"))
+
+
+list only files
+--------------------------------------------------------------
+import os.path
+listOfFiles = [f for f in os.listdir() if os.path.isfile(f)]
+print(listOfFiles)
+------------------------------------------------------------------------------------------
+Below code will list directories and the files within the dir. The other one is os.walk
+------------------------------------------------------------------------------------------
+def print_directory_contents(sPath):
+        import os                                       
+        for sChild in os.listdir(sPath):                
+            sChildPath = os.path.join(sPath,sChild)
+            if os.path.isdir(sChildPath):
+                print_directory_contents(sChildPath)
+            else:
+                print(sChildPath)
+
+----------------------------------------------------------------------				
+curr_dir=os.getcwd()  
+curr_dir_files=os.listdir(curr_dir)
+for i in range (0,len(curr_dir_files)):
+print(curr_dir,'\\',curr_dir_files[i], sep='')				
+===============================================================================================================================================
+
+===============================================================================================================================================
+a = open("file_name")
+a.read()
+===============================================================================================================================================
+Returning more than one result from a fucntion
+===============================================================================================================================================
+def funct1(a,b):
+  return(a*2,b*2)
+  
+(x,y)=funct1(3,4)
+print(x)
+print(y)
+===============================================================================================================================================
+Displays the 12 to 18 th positions in a fixed byte file
+===============================================================================================================================================
+
+filein=open('myfile.txt','r')
+x=filein.readlines()
+for i in range(0,len(x)):
+  #x[i][11:17]
+  print(x[i][11:17])
+  
+  
+filein=open('myfile.txt','r')
+x=filein.readline() #reads Line 1
+subset=x[1:4]
+x=filein.readline() # Reads Line 2
+
+
+filein=open('myfile.txt','r')
+x=filein.readline(1) #reads Line 1 byte1
+x=filein.readline(1) # Reads Line 1 byte 2
+
+
+filein=open('myfile.txt','r')
+x=filein.readlines()
+for i in range(0,len(x)):
+  filein1=open('myfile.txt','r')
+  y=filein1.readline()
+  print(y[11:17]) 
+===============================================================================================================================================
+copy 1 file into another
+===============================================================================================================================================  
+a=open('file1.txt','r')
+b=open('file2.txt,'w') 
+b.write(a.read())
+b.close()
+a.close()
+===============================================================================================================================================
+
+=============================================================================================================================================== 
+ 
+from pyspark import SparkContext;
+sc = SparkContext("local", "File Copy")
+
+from pyspark.sql.types import*;
+
+inputfile = sc.textFile("movies.txt");
+inputfile.saveAsTextFile("movies_out")
+
+sc.textFile('file:///u/hvedhasa/Training/movies.txt')
+
+sc.textFile('/u/hvedhasa/Training/movies.txt')
+
+===============================================================================================================================================
+Reading and parsing thru SC - RDD operations
+=============================================================================================================================================== 
+raw_data = sc.textFile('file:///u/hvedhasa/myspark/pyspark/input/stud.txt')
+raw_data.first()
+csv_data = raw_data.map(lambda l: l.split(","))
+
+from pyspark.sql import Row
+row_data = csv_data.map(lambda p: Row(
+    sid=int(p[0]), 
+    sname=p[1],
+    dept=p[2],
+    percent=p[3])
+)
+===============================================================================================================================================
+Reading and parsing thru SQL operations
+=============================================================================================================================================== 
+a=sqlContext.read.text('file:///u/hvedhasa/myspark/pyspark/input/stud.txt')
+#a = sqlContext.read.format("com.databricks.spark.csv").option("delimiter", ",").load('file:///u/hvedhasa/myspark/pyspark/input/stud.txt')
+a = sqlContext.read.format("text").option("delimiter", ",").load('file:///u/hvedhasa/myspark/pyspark/input/stud.txt')
+
+#Try with escape sequence
+#dff = (sqlContext.read.format("com.databricks.spark.csv").option("delimiter", "\\]\\|\\[").load(trainingdata+"part-00000")
+
+df = sqlContext.read.text("wasbs:///HdiSamples/HdiSamples/SensorSampleData/hvac/HVAC.csv")
+df.select(
+df.value.substr(1,1).cast('integer').alias('id'),
+df.value.substr(4,8).alias('date'),
+df.value.substr(12,3).alias('string')
+).show()
+
+===============================================================================================================================================
+PYXML
+===============================================================================================================================================
+import os
+import xml.etree.ElementTree as et
+filename='new.xml'
+fullfile=os.path.abspath(os.path.join(filename))
+tree=et.parse(fullfile)
+root=tree.getroot()
+a=open(fullfile)
+b=a.read()
+c=open('newfile','w')
+
+def print_xml():
+  for child in root:
+    for element in child:
+      print(element.tag,":", element.text)
+	  
+	  
+
+	  
+######################################################
+import os
+import xml.etree.ElementTree as et
+filename='new.xml'
+fullfile=os.path.abspath(os.path.join(filename))
+tree=et.parse(fullfile)
+root=tree.getroot()
+
+
+RequestId=root[0][1].text
+RequesterName=root[0][1].text
+print(RequestId + ',' + RequesterName)
+
+ServiceName=root[1][0].text
+SessionId=root[1][1].text
+TransactionSource=root[1][2].text
+TransactionSourceCode=root[1][3].text
+OperationName=root[1][4].text
+TransactionCode=root[1][5].text
+CorrelationID=root[1][6].text
+print(ServiceName + ',' + SessionId + ',' + TransactionSource + ',' + TransactionSourceCode + ',' + OperationName + ',' + TransactionCode + ',' + CorrelationID)
+
+vin=root[2][0].text
+callReason=root[2][1].text
+callAction=root[2][2].text
+RAPCase=root[2][3].text
+vehicleMileage=root[2][4].text
+comments=root[2][5].text
+caseActiveFlag=root[2][6].text
+callerFirstName=root[2][7].text
+callerLastName=root[2][8].text
+callerPhone=root[2][9].text
+vehicleDisableZipCode=root[2][10].text
+assistance=root[2][11].text
+sourceCode=root[2][12].text
+
+print(vin + ',' + callReason + ',' + callAction + ',' + RAPCase + ',' + vehicleMileage + ',' + comments + ',' + caseActiveFlag + ',' + callerFirstName + ',' + callerLastName + ',' + callerPhone + ',' + vehicleDisableZipCode + ',' + assistance)
+ 
+
+
+====================
+       
+ #read a File and convert into collection and operate upon single field
+#
+orderItemsFile= open("/u/hvedhasa/itversity/retail_db/order_items/part-00000")
+orderItemsRead=orderItemsFile.read()
+orderItems=orderItemsRead.splitlines()
+orderItemsFilter=filter(lambda rec: int(rec.split(",")[1]) == 68880,orderItems)
+#orderItemsFilter=filter(lambda rec: int(rec.split(",")[1]) == 68880 or int(rec.split(",")[1]) == 68881,orderItems)
+#orderItemsFilter=map(lambda rec: int(rec.split(",")[1]),orderItems)
+orderItemsMap=map(lambda rec: float(rec.split(",")[4]),orderItemsFilter)
+orderItepsRevenue=reduce(lambda total,element: total + element ,orderItemsMap)
+
+			[OR]
+			
+orderItepsRevenue_2 = sum(orderItemsMap)
+
+
+
+	  
